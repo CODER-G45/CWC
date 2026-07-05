@@ -170,11 +170,81 @@ tbody tr:nth-child(even){background:rgba(173,122,46,0.045);}
 .toast.show{opacity:1;}
 .hint{font-family:'Inter',sans-serif; font-size:11px; color:#8B968E; margin-top:3px; line-height:1.5;}
 .print-page2-header{display:none;}
-@media (max-width:600px){
-  .topbar{padding:10px 14px;}
-  .readout .val{font-size:16px;}
-  .card{padding:16px;}
+/* ============ Responsive ============ */
+@media (max-width:900px){
+  .wrap{padding:18px 12px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(135px,1fr));}
 }
+
+@media (max-width:700px){
+  body{font-size:13px; padding-bottom:40px;}
+  .topbar{
+    flex-direction:column;
+    align-items:stretch;
+    padding:12px 14px;
+    gap:10px;
+  }
+  .topbar .brand{justify-content:center; text-align:center;}
+  .topbar .brand h1{font-size:16px;}
+  .readout{width:100%; text-align:center; padding:8px 12px;}
+  .readout .val{font-size:18px;}
+  .topbtns{
+    width:100%;
+    justify-content:flex-start;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:4px;
+    scrollbar-width:thin;
+  }
+  .topbtns .btn{flex:none; white-space:nowrap;}
+  .wrap{padding:16px 10px;}
+  .card{padding:16px 14px;}
+  .card h2{font-size:15px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px;}
+  .tablefoot{flex-direction:column; align-items:flex-start;}
+}
+
+@media (max-width:480px){
+  .topbar .brand .subtitle, .topbar .brand span{font-size:9px;}
+  .card{padding:14px 12px; border-radius:8px;}
+  .card h2{font-size:14px; gap:8px;}
+  .card h2::before{width:20px; height:20px; line-height:20px; font-size:10px;}
+  .grid{grid-template-columns:1fr 1fr; gap:9px;}
+  .field label{font-size:9.5px;}
+  .field input, .field select{padding:9px 8px; font-size:14px;}
+  .radiorow{gap:10px;}
+  .radiorow label{font-size:12px;}
+  table{font-size:11px;}
+  th,td{padding:5px 4px;}
+  .gaugetable input{width:56px; font-size:11px;}
+  #vTable input, #vTable select{width:52px; font-size:11px;}
+  #vTable .remarks input{width:70px;}
+  .btn{padding:9px 12px; font-size:12px;}
+  .btn.small{padding:7px 10px; font-size:11px;}
+  .savedlist{gap:6px;}
+  .saveditem{flex-direction:column; align-items:flex-start; gap:8px;}
+  .saveditem .meta{flex-wrap:wrap; gap:6px;}
+}
+
+@media (max-width:360px){
+  .grid{grid-template-columns:1fr;}
+  .topbar .brand h1{font-size:15px;}
+}
+
+/* Touch-friendly hint that gauge/velocity tables scroll horizontally on narrow screens */
+@media (max-width:700px){
+  .tablewrap{position:relative;}
+  .tablewrap::after{
+    content:'→ scroll for more columns';
+    display:block;
+    text-align:right;
+    font-family:'Inter',sans-serif;
+    font-size:9.5px;
+    color:#8B968E;
+    padding:3px 6px 0;
+  }
+}
+
 @media print{
   @page{ size:A4 landscape; margin:7mm; }
   html, body{background:#fff !important; padding:0; margin:0; font-size:8px;}
