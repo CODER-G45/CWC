@@ -234,6 +234,7 @@ function avgNonZero(a,b){
   return a || b || 0;
 }
 gaugeIds.concat(['zeroRL']).forEach(id => document.getElementById(id).addEventListener('input', recalcGauge));
+
 // ---- Cross-section SVG ----
 function drawSection(){
   const svg = document.getElementById('sectionSvg');
