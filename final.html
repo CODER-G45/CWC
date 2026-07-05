@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Discharge Data — CWC</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <svg class="brandmark" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="13" y="2" width="6" height="28" rx="1.5" fill="#0B262D" stroke="#D9A857" stroke-width="1"/>
+      <rect x="13" y="2" width="6" height="7" fill="#D9A857"/>
+      <rect x="13" y="16" width="6" height="7" fill="#D9A857"/>
+      <line x1="9" y1="9" x2="13" y2="9" stroke="#D9A857" stroke-width="1.4"/>
+      <line x1="9" y1="16" x2="13" y2="16" stroke="#D9A857" stroke-width="1.4"/>
+      <line x1="9" y1="23" x2="13" y2="23" stroke="#D9A857" stroke-width="1.4"/>
+      <path d="M4 27 Q10 22 16 27 T28 27" stroke="#4F8B98" stroke-width="1.6" fill="none" opacity="0.85"/>
+    </svg>
+    <div>
+      <h1>दैनिक निस्सारण / Daily Discharge</h1>
+      <span>Central Water Commission · Digital Gauging Sheet</span>
+    </div>
+  </div>
+  <div class="readout">
+    <div class="val" id="totalDischarge">0.000</div>
+    <div class="lbl">Total Discharge (cumecs)</div>
+  </div>
+  <div class="topbtns">
+    <button class="btn ghost" id="toggleSaved" title="View, load, or delete entries saved on this device">Saved entries</button>
+    <button class="btn ghost" id="exportJsonBtn" title="Download the current form as a .json data file">Export JSON</button>
+    <button class="btn ghost" id="exportPdfBtn" title="Open print dialog — choose &quot;Save as PDF&quot; for a 2-page sheet">Export PDF</button>
+    <button class="btn ghost" id="importBtn" title="Load a previously exported .json entry (or backup file) back in">Import JSON</button>
+    <input type="file" id="importFile" accept="application/json" multiple style="display:none;">
+    <button class="btn" id="newBtn" title="Clear the form to start a fresh entry">New</button>
+    <button class="btn primary" id="saveBtn" title="Save this entry on this device and download a copy">Save entry</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="card noindex" id="savedCard" style="display:none;">
+    <h2>Saved Entries</h2>
+    <div style="margin-bottom:10px;">
+      <button class="btn small" id="backupAllBtn" title="Download every saved entry as one JSON file, for archiving" style="background:var(--brass); color:#2A1B05;">⬇ Backup all as one file</button>
+    </div>
+    <div class="savedlist open" id="savedList"><div class="hint">No saved entries yet.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Station &amp; Site / नदी एवं स्थल</h2>
+    <div class="grid">
+      <div class="field"><label>River / नदी</label><input id="river" placeholder="e.g. Ganga" value="Budhi Ghandhak"></div>
+      <div class="field"><label>Site / स्थल</label><input id="site" placeholder="e.g. Farakka" value="Chanpatia"></div>
+      <div class="field"><label>Code No.</label><input id="code"></div>
+      <div class="field"><label>Date / दिनांक</label><input id="date" type="date"></div>
+      <div class="field"><label>Time From</label><input id="timeFrom" type="time"></div>
+      <div class="field"><label>Time To</label><input id="timeTo" type="time"></div>
+      <div class="field"><label>Mode of Observation</label>
+        <select id="mode"><option>Wading</option><option>Boat</option><option>Cable way</option><option selected>Bridge</option><option>Other</option></select>
+      </div>
+      <div class="field"><label>Location of Discharge Site (m)</label><input id="locSite" type="number" step="any" value="103"></div>
+      <div class="field"><label>Meters U/S or D/S of Site</label><input id="usds"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Instrument &amp; Method / मापन यंत्र</h2>
+    <div class="grid">
+      <div class="field"><label>Meter No. &amp; Make</label><input id="meterNo"></div>
+      <div class="field"><label>Rating Equation</label><input id="ratingEq"></div>
+      <div class="field"><label>Date of Last Rating</label><input id="lastRating" type="date"></div>
+      <div class="field"><label>Rated Spin</label><input id="ratedSpin" type="number" step="any"></div>
+      <div class="field"><label>Spin Before Measurement</label><input id="spinBefore" type="number" step="any"></div>
+      <div class="field"><label>Spin After Measurement</label><input id="spinAfter" type="number" step="any"></div>
+      <div class="field"><label>No. of Days in Use</label><input id="daysUse" type="number" step="any"></div>
+      <div class="field"><label>Velocity Observed at</label><input id="velAt" placeholder="e.g. 0.6 Surface"></div>
+      <div class="field"><label>Sounding Taken With</label><input id="sounding"></div>
+      <div class="field"><label>Weight Used (kg)</label><input id="weight" type="number" step="any"></div>
+      <div class="field"><label>Method of Suspending</label><input id="suspend"></div>
+      <div class="field"><label>Type of Watch Used</label><input id="watch"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Water &amp; Weather / जल एवं मौसम</h2>
+    <div class="grid" style="margin-bottom:12px;">
+      <div class="field"><label>River Water Temp (°C)</label><input id="waterTemp" type="number" step="any"></div>
+      <div class="field"><label>Air Temp Max (°C)</label><input id="airMax" type="number" step="any"></div>
+      <div class="field"><label>Air Temp Min (°C)</label><input id="airMin" type="number" step="any"></div>
+      <div class="field"><label>Weather Condition</label><input id="weather" placeholder="e.g. Clear"></div>
+      <div class="field"><label>Wind Direction (w.r.t. flow)</label><input id="windDir" placeholder="e.g. E to W"></div>
+      <div class="field"><label>Rainfall (mm)</label><input id="rainfall" type="number" step="any"></div>
+    </div>
+    <div class="field" style="margin-bottom:10px;">
+      <label>Condition of Water</label>
+      <div class="radiorow">
+        <label><input type="radio" name="waterCond" value="Fairly Clear"> Fairly Clear</label>
+        <label><input type="radio" name="waterCond" value="Ordinarily Silty" checked> Ordinarily Silty</label>
+        <label><input type="radio" name="waterCond" value="Intensely Silty"> Intensely Silty</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Velocity of Wind</label>
+      <div class="radiorow">
+        <label><input type="radio" name="windVel" value="Very Slight" checked> Very Slight</label>
+        <label><input type="radio" name="windVel" value="Slight"> Slight</label>
+        <label><input type="radio" name="windVel" value="Strong"> Strong</label>
+        <label><input type="radio" name="windVel" value="Very Strong"> Very Strong</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gauge Readings / गेज पाठ्यांक</h2>
+    <div class="grid" style="margin-bottom:12px; max-width:320px;">
+      <div class="field"><label>Zero R.L. (G.T.S.) mt</label><input id="zeroRL" type="number" step="any" value="0"></div>
+    </div>
+    <div class="tablewrap">
+    <table class="gaugetable">
+      <tr><th></th><th colspan="3">Permanent</th><th colspan="3">Temporary</th></tr>
+      <tr><th>Gauge</th><th>L.B.</th><th>R.B.</th><th class="calc">Mean</th><th>L.B.</th><th>R.B.</th><th class="calc">Mean</th></tr>
+      <tr><td>Beginning</td>
+        <td><input id="pB_lb" type="number" step="any"></td><td><input id="pB_rb" type="number" step="any"></td><td class="calc"><span id="pB_mean">0.000</span></td>
+        <td><input id="tB_lb" type="number" step="any"></td><td><input id="tB_rb" type="number" step="any"></td><td class="calc"><span id="tB_mean">0.000</span></td>
+      </tr>
+      <tr><td>End</td>
+        <td><input id="pE_lb" type="number" step="any"></td><td><input id="pE_rb" type="number" step="any"></td><td class="calc"><span id="pE_mean">0.000</span></td>
+        <td><input id="tE_lb" type="number" step="any"></td><td><input id="tE_rb" type="number" step="any"></td><td class="calc"><span id="tE_mean">0.000</span></td>
+      </tr>
+      <tr><td>Mean</td>
+        <td class="calc"><span id="pM_lb">0.000</span></td><td class="calc"><span id="pM_rb">0.000</span></td><td class="calc"><span id="pM_mean">0.000</span></td>
+        <td class="calc"><span id="tM_lb">0.000</span></td><td class="calc"><span id="tM_rb">0.000</span></td><td class="calc"><span id="tM_mean">0.000</span></td>
+      </tr>
+    </table>
+    </div>
+    <p class="hint">Mean Water Level (Standard Bank) = Zero R.L. + Temporary Mean Gauge → <strong id="meanWL">0.000</strong> mt</p>
+  </div>
+
+  <div class="print-page2-header" id="printPage2Header"></div>
+  <div class="card" id="xsCard">
+    <h2>Cross-Section &amp; Velocity Table / अनुप्रस्थ काट सारणी</h2>
+    <p class="hint" style="margin-bottom:10px;">Col 8 (Diff), Col 9 (Bed Incr.) and Col 14 (Mean Vel) are auto-calculated as you type RD, Depth, Time and Revolutions. Mean Velocity uses the fixed rating equation V = (0.6799 × Revolutions ⁄ Time) + 0.0082. Corr. Vel is editable if a drift/angle correction applies.</p>
+    <div style="margin-bottom:12px;">
+      <button type="button" class="btn small" id="defaultTimeBtn" style="background:var(--river); color:#fff;">Default Time: 40s (tap to set 50s for all)</button>
+    </div>
+    <div class="tablewrap">
+    <table id="vTable">
+      <thead>
+        <tr>
+          <th>#</th><th>1<br>R.D. (m)</th><th>2<br>Depth (m)</th><th>4<br>Air Corr</th><th>5<br>Wet Corr</th>
+          <th>7<br>Corr. Depth</th><th>8<br>Diff (m)</th><th>9<br>Bed Incr.</th><th>10<br>Time (s)</th><th>11<br>Revolutions</th>
+          <th>14<br>Mean Vel (m/s)</th><th>Corr. Vel (m/s)</th><th>18<br>Product</th><th>Remarks</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="vBody"></tbody>
+      <tfoot>
+        <tr class="totalrow">
+          <td colspan="5">TOTAL</td>
+          <td id="sumDepth">0.000</td><td></td><td id="sumBedIncr">0.000</td><td></td><td></td><td></td><td></td>
+          <td id="sumProduct">0.000</td><td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+    <div class="tablefoot">
+      <button class="btn small" id="addRow" style="background:var(--river); color:#fff;">+ Add vertical</button>
+      <span class="hint">RD must be entered in increasing order (bank → bank) for Col 8/9 to compute correctly.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Salient Data / प्रमुख आंकड़े <span class="hint" style="font-weight:400;">(back page — Area, Discharge &amp; Section Properties)</span></h2>
+    <div class="grid" style="margin-bottom:14px;">
+      <div class="field"><label>Fall in Metre (m)</label><input id="fallMetre" type="number" step="any" value="0"></div>
+      <div class="field"><label>Mean Distance Between Gauges (m)</label><input id="meanDistGauge" type="number" step="any" value="0"></div>
+      <div class="field"><label>Bed Slope, S</label><input class="readonly" id="slopeS" readonly value="0.00000"></div>
+    </div>
+    <div class="tablewrap">
+    <table class="gaugetable">
+      <tr><th></th><th>Area (A)</th><th>Discharge (Q)</th></tr>
+      <tr><td>Total (Col 7 / Col 18)</td><td class="calc"><span id="sd_total7">0.000</span></td><td class="calc"><span id="sd_total18">0.000</span></td></tr>
+      <tr><td>× Common Width of Segment</td><td class="calc"><span id="sd_width">0.000</span></td><td class="calc"><span id="sd_width2">0.000</span></td></tr>
+      <tr><td>Product</td><td class="calc"><span id="sd_prodA">0.000</span></td><td class="calc"><span id="sd_prodQ">0.000</span></td></tr>
+      <tr><td>− Deducted Correction (Col 19 total)</td><td class="calc"><span id="sd_corrA">0.000</span></td><td class="calc"><span id="sd_corrQ">0.000</span></td></tr>
+      <tr><td><strong>= Area (A) / Discharge (Q)</strong></td><td class="calc"><strong><span id="sd_areaA">0.000</span></strong></td><td class="calc"><strong><span id="sd_dischQ">0.000</span></strong></td></tr>
+    </table>
+    </div>
+    <div class="grid" style="margin-top:14px;">
+      <div class="field"><label>Surface Width, w (m)</label><input class="readonly" id="sd_surfWidth" readonly value="0.000"></div>
+      <div class="field"><label>Wetted Perimeter, P (m)</label><input class="readonly" id="sd_wettedP" readonly value="0.000"></div>
+      <div class="field"><label>1. V Mean = Q/A (m/s)</label><input class="readonly" id="sd_vMean" readonly value="0.000" style="font-weight:600;"></div>
+      <div class="field"><label>2. V Max — Max Point Velocity (m/s)</label><input class="readonly" id="sd_vMax" readonly value="0.000"></div>
+      <div class="field"><label>3. R = A/P (Hydraulic Mean Depth)</label><input class="readonly" id="sd_R" readonly value="0.000"></div>
+      <div class="field"><label>4. C (Chezy) = V/√(RS)</label><input class="readonly" id="sd_chezy" readonly value="0.000"></div>
+      <div class="field"><label>5. N (Manning) = R^(1/6)/C</label><input class="readonly" id="sd_manning" readonly value="0.000"></div>
+      <div class="field"><label>6. Mean Depth = A/W (m)</label><input class="readonly" id="sd_meanDepth" readonly value="0.000"></div>
+    </div>
+    <p class="hint">Common width of segment = the most frequent RD spacing in the table. Deducted Correction (per CWC Note 3/4) = Σ (Common Width − ½·(left segment + right segment)) × Col 7 (or Col 18) for each row — this naturally corrects the two end verticals where the segment is shorter than standard.</p>
+  </div>
+
+  <div class="card" id="sectionCard">
+    <h2>River Cross-Section (live) / अनुप्रस्थ काट</h2>
+    <div class="svgwrap"><svg id="sectionSvg" width="100%" height="220" viewBox="0 0 1000 220" preserveAspectRatio="none"></svg></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
