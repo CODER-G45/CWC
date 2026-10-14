@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cwc-discharge
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false      # paste your Neon connection string in the Render dashboard
+      - key: CWC_TOKEN
+        sync: false      # choose an access code
