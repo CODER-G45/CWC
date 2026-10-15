@@ -71,7 +71,7 @@ function focusCell(tr, f){
   if(!t) return;
   t.focus({preventScroll:true});
   if(t.select) t.select();                       // typing overwrites the old value
-  t.scrollIntoView({block:'center', inline:'center', behavior:'smooth'});
+  t.scrollIntoView({block:'nearest', inline:'nearest', behavior:'auto'});   // minimal scroll, no jumping
 }
 function moveFrom(inp, dir){
   const tr = inp.closest('tr'), f = inp.dataset.f;
@@ -108,11 +108,20 @@ vBody.addEventListener('focusout', () => {
   barTimer = setTimeout(() => { entryBar.hidden = true; document.body.classList.remove('has-entrybar'); }, 250);
 });
 entryBar.addEventListener('mousedown', e => e.preventDefault());   // keep keyboard open while tapping the bar
-entryBar.addEventListener('click', e => {
-  const b = e.target.closest('button[data-nav]');
-  if(!b) return;
+function barAction(b){
   if(b.dataset.nav === 'add'){ rows.push(newRow()); renderRows(); focusCell(vBody.lastElementChild, 'rd'); return; }
   if(lastCell && lastCell.isConnected) moveFrom(lastCell, b.dataset.nav);
+}
+// pointerdown = instant response on every tap and the keyboard never closes
+entryBar.addEventListener('pointerdown', e => {
+  const b = e.target.closest('button[data-nav]');
+  if(!b) return;
+  e.preventDefault();
+  barAction(b);
+});
+entryBar.addEventListener('click', e => {          // keyboard / switch-access users (no pointer event)
+  const b = e.target.closest('button[data-nav]');
+  if(b && e.detail === 0) barAction(b);
 });
 if(window.visualViewport){                       // lift the bar above the on-screen keyboard
   const vv = window.visualViewport;

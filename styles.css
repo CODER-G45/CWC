@@ -310,3 +310,12 @@ body.has-entrybar .toast{bottom:84px;}
 @media (min-width:901px) and (pointer:fine){ .entrybar{display:none !important;} body.has-entrybar{padding-bottom:60px;} }
 @media (max-width:700px){ #vTable input, #vTable select{padding:10px 3px;} }   /* bigger tap targets */
 @media print{ .entrybar{display:none !important;} }
+
+/* ---- entry bar v2: big "Next" button for going down a column ---- */
+.entrybar{flex-wrap:wrap;}
+.entrybar #entryPos{order:-1; flex:0 0 100%; text-align:left; font-size:11px; opacity:0.85;}
+.entrybar button{height:48px;}
+.entrybar button[data-nav="down"]{flex:1; min-width:96px; font-size:18px; background:linear-gradient(180deg,#5FA2B3,var(--river)); border-color:var(--river-light);}
+#vTable input{scroll-margin-bottom:150px; scroll-margin-top:110px;}   /* keep the active cell clear of the bar and top header */
+body.has-entrybar{padding-bottom:170px;}
+body.has-entrybar .toast{bottom:104px;}
